@@ -1,5 +1,8 @@
 import { Rescue } from '../db'
 import DatabaseQuery from '../query/DatabaseQuery'
+import axios from 'axios'
+import path from 'path'
+import fs from 'fs'
 import {
   UnsupportedMediaAPIError
 } from '../classes/APIError'
@@ -90,6 +93,17 @@ export default class Rescues extends APIResource {
   @parameters('id')
   async update (ctx) {
     const result = await super.update({ ctx, databaseType: Rescue, updateSearch: { id:ctx.params.id } })
+
+    const randCatId = Math.floor(Math.random() * 10000)
+    const image = await axios({
+      url: `https://cataas.com/cat?${randCatId}`,
+      method: 'GET',
+      responseType: 'stream'
+    })
+
+    const imagePath = path.resolve(__dirname, `${randCatId}.jpg`)
+    const writer = fs.createWriteStream(imagePath)
+    image.data.pipe(writer)
 
     const query = new DatabaseQuery({ connection: ctx })
     return new DatabaseDocument({ query, result, type: RescueView })
