@@ -208,3 +208,7 @@ export default class Rats extends APIResource {
     }
   }
 }
+
+ /**
+   * Ok, so not really, but...
+   */
